@@ -9,7 +9,7 @@
     "seed": ""
   },
   "author": "Jorge Duarte <jorge_duarte@outlook.pt>",
-  "license": "MIT",
+  "license": "Apache License V2.0",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
