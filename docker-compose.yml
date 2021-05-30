@@ -1,0 +1,39 @@
+version: "3.6"
+
+services:
+  mongodb:  
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - custom_network
+  nodedockerduarte:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    command: npm start
+    networks:
+      - custom_network
+    volumes:
+      - ./:/var/www/docker-test/
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    container_name: nodedockerduarte
+    depends_on: 
+      - mongodb
+  webserver:
+    image: nginx:latest
+    container_name: webserver-nginx
+    volumes:
+      - ./src/public:/src/www/static #static directory
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    depends_on: 
+      - nodedockerduarte
+    networks:
+      - custom_network
+    ports:
+      - '80:80'
+networks:
+  custom_network:
