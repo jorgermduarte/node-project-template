@@ -6,7 +6,7 @@ let UserSchema = new Schema({
     password : { type: String , required: true},
     avatar : { type: String },
     nickname : { type : String, required : true },
-    date_create  : { type: Date, required: true },
+    date_create  : { type: Date, default: Date.now },
     date_update :  { type: Date },
     settings : {
         activation_secret : { type: String, required: true }, //used to activate the account via email
@@ -29,6 +29,7 @@ UserSchema.options.toObject.transform = function (doc, ret, options) {
 
 
 const UserModel = mongoose.model('User',UserSchema);
+
 
 module.exports = {
     schema : UserSchema,

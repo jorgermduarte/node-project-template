@@ -6,5 +6,5 @@ module.exports = function(req,res,next){
     if (errors.isEmpty())
         next()
     else
-        new response(req,res).Send(errors,response_types.invalid,"Failed to validate the model",status_types.bad_request)
+        new response(req,res).BadRequest(errors,"Failed to validate the model provided")
 }

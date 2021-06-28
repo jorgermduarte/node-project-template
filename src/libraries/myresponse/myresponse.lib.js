@@ -36,20 +36,55 @@ class Response{
 
     Send(result = null,response_type = null,message = null,status_type = null){
         let r = Object.create(this.obj)
+
         if(response_type) r.response_type = response_type;
         if(result) r.result = result;
         if(message) r.message = message;
-        if(status_type) r.status_type = status_type;
+        if(status_type)
+            r.status_type = status_type;
+        else
+            r.status_type = status_types.ok;
 
-        if(status_type == status_types.bad_request){
+        if(r.status_type == status_types.bad_request){
             delete r.result;
-            r.errors = result.errors;
+            if(result?.errors)
+                r.errors = result.errors;
+            else
+                r.errors = result;
         }
-
-
+        
         this.#_res.status(r.status_type).send(r)
     }
 
+    Success(result,message){
+        let r = Object.create(this.obj)
+        r.response_type = response_types.success;
+        r.status_type = status_types.ok;
+
+        if(result) r.result = result;
+        if(message) r.message = message;
+        
+        this.#_res.status(r.status_type).send(r)
+    }
+
+    BadRequest(errors = {},message = ""){
+        let r = Object.create(this.obj);
+        r.status_type = status_types.bad_request;
+        r.message = message;
+        r.response_type =  response_types.invalid;
+        delete r.result
+
+        if(errors){
+            if(errors.errors)
+                r.errors = errors.errors;
+            else
+                r.errors = errors
+        }else{
+            r.errors = {}
+        }
+        
+        this.#_res.status(r.status_type).send(r)
+    }
 
 }
 
