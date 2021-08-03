@@ -14,6 +14,7 @@ const status_types = {
    unauthorized : 401,
    not_found : 404,
    internal_server_error : 500,
+   not_implemented : 501,
    service_unavailable : 503
 }
 
@@ -56,6 +57,14 @@ class Response{
         this.#_res.status(r.status_type).send(r)
     }
 
+    Unauthorized(message = ""){
+        let r = Object.create(this.obj)
+        r.response_type = response_types.unauthorized
+        r.message = message
+        r.status_type = status_types.unauthorized
+        this.#_res.status(r.status_type).send(r)
+    }
+
     Success(result,message){
         let r = Object.create(this.obj)
         r.response_type = response_types.success;
@@ -64,6 +73,22 @@ class Response{
         if(result) r.result = result;
         if(message) r.message = message;
         
+        this.#_res.status(r.status_type).send(r)
+    }
+
+    Error(message){
+        let r = Object.create(this.obj)
+        r.response_type = response_types.error
+        r.message = message
+        r.status_type = status_types.internal_server_error
+        this.#_res.status(r.status_type).send(r)        
+    }
+
+    NotImplemented(){
+        let r = Object.create(this.obj)
+        r.response_type = response_types.error
+        r.message = "Method not implemented"
+        r.status_type = status_types.not_implemented
         this.#_res.status(r.status_type).send(r)
     }
 

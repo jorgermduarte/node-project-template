@@ -1,0 +1,26 @@
+name: SuActivity -Website- Production
+on:
+  push:
+    branches:
+      - deployment
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: SSH Server Deploy
+        uses: kostya-ten/ssh-server-deploy@v4
+        with:
+          host: ${{ secrets.SERVER_DEPLOY_HOST }}
+          port: ${{ secrets.SERVER_DEPLOY_PORT }}
+          username: ${{ secrets.SERVER_DEPLOY_USER }}
+          password: ${{ secrets.SERVER_DEPLOY_PASSWORD }}
+          scp_source: ./*
+          scp_target: /var/www/${{secrets.SERVER_FOLDER_LOCATION}}
+          before_script: |
+            find /var/www/${{secrets.SERVER_FOLDER_LOCATION}} -mindepth 1 ! -regex '^./var/www/${{secrets.SERVER_FOLDER_LOCATION}}/node_modules\(/.*\)?' -delete
+          after_script: |
+            npm install --prefix /var/www/${{secrets.SERVER_FOLDER_LOCATION}}
+            pm2 start /var/www/${{secrets.SERVER_FOLDER_LOCATION}}/ecosystem.config.js --env production
